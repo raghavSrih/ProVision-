@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>jquery.min.js</file>
+        <file>default.html</file>
+        <file>qwebchannel.js</file>
+        <file>sar_default.html</file>
+        <file>touch_test.html</file>
+        <file>jquery.mobile-1.4.5.min.js</file>
+        <file>touch.prototype.min.js</file>
+        <file>jquery-1.11.3.min.js</file>
+        <file>touch_injection.js</file>
+    </qresource>
+</RCC>

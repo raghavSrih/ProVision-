@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <script type="text/javascript" src="qrc:///qwebchannel.js"></script>
+        <script type="text/javascript">
+            //BEGIN SETUP
+            function output(message)
+            {
+                var output = document.getElementById("output");
+                output.innerHTML = output.innerHTML + message + "\n";
+            }
+            window.onload = function() {
+                if (location.search != "")
+                    var baseUrl = (/[?&]webChannelBaseUrl=([A-Za-z0-9\-:/\.]+)/.exec(location.search)[1]);
+                else
+                    var baseUrl = "ws://localhost:11226";
+
+                output("Connecting to WebSocket server at " + baseUrl + ".");
+                var socket = new WebSocket(baseUrl);
+
+                socket.onclose = function()
+                {
+                    console.error("web channel closed");
+                };
+                socket.onerror = function(error)
+                {
+                    console.error("web channel error: " + error);
+                };
+                socket.onopen = function()
+                {
+                    output("WebSocket connected, setting up QWebChannel.");
+                    new QWebChannel(socket, function(channel) {
+                        // make dialog object accessible globally
+                        window.dialog = channel.objects.chatserver;
+
+                        document.getElementById("send").onclick = function() {
+                            var input = document.getElementById("input");
+                            var text = input.value;
+                            if (!text) {
+                                return;
+                            }
+                            var jsonObj = {"value": text};
+
+                            output("Sent message: " + JSON.stringify(jsonObj));
+                            input.value = "";
+                            dialog.receiveJsonData_FromHTML(jsonObj);
+                        }
+
+                        dialog.sendJsonData_toHTML.connect(function(message) {
+                            output("Received message: " + message.value);
+                        });
+
+                      output("Connected to WebChannel, ready to send/receive messages!");
+                    });
+                }
+            }
+            //END SETUP
+        </script>
+        <style type="text/css">
+          #aruco_17 {
+            position: absolute;
+            float: left;
+              width: 100%;
+        padding-bottom: 100%;
+              }
+
+          #circle {
+            position: absolute;
+            width: 25%;
+            height: 25%;
+            background-color: #e5e5e5;
+            border-radius: 50%;
+          }
+
+          #small-circle{
+            margin-top: 25%;
+            margin-left: 25%;
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            background-color: #000000;
+            border-radius: 50%;
+          }
+        </style>
+    </head>
+    <body bgcolor="#000000">
+
+
+    <div id="aruco_17">
+    <div id="circle">
+        <div id="small-circle">
+        </div>
+    </div>
+    </div>
+
+    </body>
+</html>
